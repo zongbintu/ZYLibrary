@@ -5,6 +5,8 @@ group='com.github.2tu'
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
     compile 'com.android.support:support-v4:22.1.1'
+    compile files('libs/EventBus2.4.jar')
+    compile files('libs/mta-mid-sdk-2.20.jar')
 }
 
 android {
