@@ -1,6 +1,5 @@
 package com.zongyou.library.platform;
 
-import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
