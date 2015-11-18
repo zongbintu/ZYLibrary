@@ -30,7 +30,7 @@
 
     <!-- Required -->
     <permission
-        android:name="${JPUSH_PREMISSION}"
+        android:name="${applicationId}.permission.JPUSH_MESSAGE"
         android:protectionLevel="signature"/>
     <uses-sdk
         android:minSdkVersion="14"
