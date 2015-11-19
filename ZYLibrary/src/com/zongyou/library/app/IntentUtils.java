@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import com.zongyou.library.R;
 import com.zongyou.library.util.RegexUtils;
 import com.zongyou.library.util.ToastUtils;
 
@@ -27,8 +26,14 @@ public class IntentUtils {
      * @param num
      */
     public static void call(Context context, String num) {
-        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + num));
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + telFormat(num)));
         context.startActivity(intent);
+    }
+
+    private static  String telFormat(String source) {
+        if (null != source)
+            return source.replace(" ", "").replace("-", "");
+        return source;
     }
 
     /**
@@ -38,7 +43,7 @@ public class IntentUtils {
      * @param num
      */
     public static void dial(Context context, String num) throws Exception {
-        if (!RegexUtils.match(RegexUtils.POSITIVE_INTEGER, num))
+        if (!RegexUtils.match(RegexUtils.POSITIVE_INTEGER, telFormat(num)))
             throw new Exception("is not tel number");
         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + num));
         context.startActivity(intent);
@@ -77,10 +82,11 @@ public class IntentUtils {
 
     /**
      * 打开地图
+     *
      * @param context
-     * @param uri geo:" + point.y + "," + point.x + "?q=" + point.address
+     * @param uri     geo:" + point.y + "," + point.x + "?q=" + point.address
      */
-    public static void openSysMap(Context context,Uri uri){
+    public static void openSysMap(Context context, Uri uri) {
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             context.startActivity(intent);

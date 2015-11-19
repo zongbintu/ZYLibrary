@@ -15,7 +15,6 @@ import android.widget.ProgressBar;
  * @email Altas.Tutu@gmail.com
  * @time 2015-3-27 上午10:09:19
  */
-@SuppressWarnings("deprecation")
 public class ProgressWebView extends WebView {
 	private ValueCallback<Uri> mUploadMessage;
 	public final static int FILECHOOSER_RESULTCODE = 1;
@@ -143,6 +142,8 @@ public class ProgressWebView extends WebView {
 	@Override
 	protected void onScrollChanged(int l, int t, int oldl, int oldt) {
 		LayoutParams lp = (LayoutParams) progressbar.getLayoutParams();
+		if(null ==lp)
+			return;
 		lp.x = l;
 		lp.y = t;
 		progressbar.setLayoutParams(lp);
