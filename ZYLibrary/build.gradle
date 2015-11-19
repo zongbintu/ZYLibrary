@@ -15,6 +15,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 15
+        manifestPlaceholders = [JPUSH_APPKEY_VALUE: '']
     }
     sourceSets {
         main {
