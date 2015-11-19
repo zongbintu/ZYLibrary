@@ -93,10 +93,7 @@
         <!-- Required SDK核心功能 -->
         <receiver android:name="cn.jpush.android.service.AlarmReceiver"/>
 
-        <!-- Required. AppKey copied from Portal -->
-        <meta-data
-            android:name="JPUSH_APPKEY"
-            android:value="${JPUSH_APPKEY_VALUE}"/>
+
     </application>
 
 </manifest>
