@@ -28,6 +28,7 @@ import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.zongyou.library.util.LogUtils;
 import com.zongyou.library.util.base64.AESUtils;
 import com.zongyou.library.util.base64.EnResult;
@@ -131,27 +132,28 @@ public class ObjectRequest<T> extends Request<T> {
 			// 将结果转换为T
 			final String data = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
 
-			Log.e("parseNetworkResponse", data);
+            Log.e("parseNetworkResponse", data);
+            Gson gson = new GsonBuilder().create();
+            EnResult result = gson.fromJson(data, EnResult.class);
+//					JSONHelper.parseObject(data, EnResult.class);
+            T newResult;
 
-			EnResult result = JSONHelper.parseObject(data, EnResult.class);
-			T newResult;
-
-			if (isPass) {
-				// TODO 解密
-				if (result == null) {
-					result = (EnResult) mErrorT;
-				}
-				if (TextUtils.isEmpty(result.data)) {
-					newResult = JSONHelper.parseObject(data, mClazz);
-				} else {
-					String token = result.token;
-					if (TextUtils.isEmpty(token)) {
-						token = PreferenceUtils.getValue(mContext, "logintoken", "");
-					}else
-						PreferenceUtils.setValue(mContext, "token", result.token);
-					if (TextUtils.isEmpty(token)) {
-						token = PreferenceUtils.getValue(mContext, "token", "");
-					}
+            if (isPass) {
+                // TODO 解密
+                if (result == null) {
+                    result = (EnResult) mErrorT;
+                }
+                if (TextUtils.isEmpty(result.data)) {
+                    newResult = gson.fromJson(data, mClazz);
+                } else {
+                    String token = result.token;
+                    if (TextUtils.isEmpty(token)) {
+                        token = PreferenceUtils.getValue(mContext, "logintoken", "");
+                    } else
+                        PreferenceUtils.setValue(mContext, "token", result.token);
+                    if (TextUtils.isEmpty(token)) {
+                        token = PreferenceUtils.getValue(mContext, "token", "");
+                    }
 
 					String key = PreferenceUtils.getValue(mContext, "key", "");
 					if (!TextUtils.isEmpty(result.key)) {
@@ -169,60 +171,56 @@ public class ObjectRequest<T> extends Request<T> {
 						PreferenceUtils.setValue(mContext, "userId", result.userId);
 					}
 
-					AESUtils aesUtils = new AESUtils(token, key, userId);
-					String datas = aesUtils.decrypt(result.data);
-					LogUtils.e("data", datas);
-					if (null == mClazz || TextUtils.isEmpty(datas)) {
-						newResult = JSONHelper.parseObject(data, mClazz);
-						Response<T> responseT = Response.success(newResult, HttpHeaderParser.parseCacheHeaders(response));
-						return responseT;
-					}
-					// json parse mClass
-					newResult = JSONHelper.parseObject(data, mClazz);
-					Field f;
-					try {
-						f = mClazz.getField("data");
-						Class dataClazz = f.getType();
-						if (JSONHelper.isSingle(dataClazz)) {
-							f.set(newResult, datas);
-						} else if (JSONHelper.isCollection(dataClazz)) {
-							Class<?> c = null;
-							Type gType = f.getGenericType();
-							if (gType instanceof ParameterizedType) {
-								ParameterizedType ptype = (ParameterizedType) gType;
-								Type[] targs = ptype.getActualTypeArguments();
-								if (targs != null && targs.length > 0) {
-									Type t = targs[0];
-									c = (Class<?>) t;
-								}
-							}
-							f.set(newResult, JSONHelper.parseCollection(datas, ArrayList.class, c));
-						} else {
-							Gson gson = new Gson();
-							f.set(newResult, gson.fromJson(datas, dataClazz));
-						}
+                    AESUtils aesUtils = new AESUtils(token, key, userId);
+                    String datas = aesUtils.decrypt(result.data);
+                    LogUtils.e("data", datas);
+                    if (null == mClazz || TextUtils.isEmpty(datas)) {
+                        newResult = gson.fromJson(data, mClazz);
+                        Response<T> responseT = Response.success(newResult, HttpHeaderParser.parseCacheHeaders(response));
+                        return responseT;
+                    }
+                    // json parse mClass
+                    result.data = null;
+                    newResult = gson.fromJson(gson.toJson(result), mClazz);
+                    Field f;
+                    try {
+                        f = mClazz.getField("data");
+                        Class dataClazz = f.getType();
+                        if (JSONHelper.isSingle(dataClazz)) {
+                            f.set(newResult, datas);
+                        } else if (JSONHelper.isCollection(dataClazz)) {
+                            Class<?> c = null;
+                            Type gType = f.getGenericType();
+//							if (gType instanceof ParameterizedType) {
+//								ParameterizedType ptype = (ParameterizedType) gType;
+//								Type[] targs = ptype.getActualTypeArguments();
+//								if (targs != null && targs.length > 0) {
+//									Type t = targs[0];
+//									c = (Class<?>) t;
+//								}
+//							}
+                            f.set(newResult, gson.fromJson(datas, gType));
+//							gson.fromJson(datas,gType);
+//							f.set(newResult, JSONHelper.parseCollection(datas, ArrayList.class, c));
+                        } else {
+                            f.set(newResult, gson.fromJson(datas, dataClazz));
+                        }
 
-					} catch (Exception e) {
-						LogUtils.e(e.getMessage());
-					}
-				}
-			} else {
-				if(mClazz != null) {
-					Gson gson = new Gson();
-					newResult = gson.fromJson(data, mClazz);
-
-				}else {
-					newResult = JSONHelper.parseObject(data, mClazz);
-				}
-			}
-			Response<T> responseT = Response.success(newResult, HttpHeaderParser.parseCacheHeaders(response));
-			return responseT;
-		} catch (UnsupportedEncodingException e) {
-			LogUtils.e(TAG, e);
-			return Response.error(new ParseError(e));
-		} catch (Exception ex) {
-			LogUtils.e(TAG, ex);
-			return Response.error(new ParseError(ex));
-		}
-	}
+                    } catch (Exception e) {
+                        LogUtils.e(e.getMessage());
+                    }
+                }
+            } else {
+                newResult = gson.fromJson(data, mClazz);
+            }
+            Response<T> responseT = Response.success(newResult, HttpHeaderParser.parseCacheHeaders(response));
+            return responseT;
+        } catch (UnsupportedEncodingException e) {
+            LogUtils.e(TAG, e);
+            return Response.error(new ParseError(e));
+        } catch (Exception ex) {
+            LogUtils.e(TAG, ex);
+            return Response.error(new ParseError(ex));
+        }
+    }
 }
