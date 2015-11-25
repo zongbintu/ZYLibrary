@@ -26,19 +26,22 @@ public class UpgradeManager {
 	 * @param description
 	 */
 	public static long updgrade(Context context, Uri uri, String title, String description) {
-		DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-		DownloadManager.Request request = new DownloadManager.Request(uri);
-		request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, uri.toString().substring(uri.toString().lastIndexOf("/") + 1));
-		File folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-		if (!folder.exists() || !folder.isDirectory()) {
-			folder.mkdirs();
+		if(DownloadManagerResolver.resolve(context)) {
+			DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+			DownloadManager.Request request = new DownloadManager.Request(uri);
+			request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, uri.toString().substring(uri.toString().lastIndexOf("/") + 1));
+			File folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+			if (!folder.exists() || !folder.isDirectory()) {
+				folder.mkdirs();
+			}
+			request.setTitle(title);
+			request.setDescription(description);
+			if (Build.VERSION_CODES.HONEYCOMB <= Build.VERSION.SDK_INT)
+				request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+			request.setMimeType("application/vnd.android.package-archive");
+			return downloadManager.enqueue(request);
 		}
-		request.setTitle(title);
-		request.setDescription(description);
-		if (Build.VERSION_CODES.HONEYCOMB <= Build.VERSION.SDK_INT)
-			request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-		request.setMimeType("application/vnd.android.package-archive");
-		return downloadManager.enqueue(request);
+		return 0;
 	}
 
 }
