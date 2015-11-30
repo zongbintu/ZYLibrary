@@ -35,12 +35,9 @@ import com.zongyou.library.util.base64.EnResult;
 import com.zongyou.library.util.json.JSONHelper;
 import com.zongyou.library.util.storage.PreferenceUtils;
 
-
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 
 /**
  * A request for retrieving a T type response body at a given URL that also
@@ -50,96 +47,97 @@ import java.util.ArrayList;
  */
 public class ObjectRequest<T> extends Request<T> {
 
-	public static final String TAG = ObjectRequest.class.getSimpleName();
+    public static final String TAG = ObjectRequest.class.getSimpleName();
 
-	private final Listener<T> mListener;
-	private Class<T> mClazz;
-	private T mErrorT;
-	private boolean isPass;
+    private final Listener<T> mListener;
+    private Class<T> mClazz;
+    private T mErrorT;
+    private boolean isPass;
+    private String url;
 
 
-	/**
-	 * Deprecated constructor for a JsonRequest which defaults to GET unless
-	 * {@link #getPostBody()} or {@link #getPostParams()} is overridden (which
-	 * defaults to POST).
-	 */
-	public ObjectRequest(String url, String requestBody, Listener<T> listener, ErrorListener errorListener) {
-		this(Method.DEPRECATED_GET_OR_POST, url, listener, errorListener);
-	}
+    /**
+     * Deprecated constructor for a JsonRequest which defaults to GET unless
+     * {@link #getPostBody()} or {@link #getPostParams()} is overridden (which
+     * defaults to POST).
+     */
+    public ObjectRequest(String url, String requestBody, Listener<T> listener, ErrorListener errorListener) {
+        this(Method.DEPRECATED_GET_OR_POST, url, listener, errorListener);
+    }
 
-	private ObjectRequest(int method, String url, Listener<T> listener, ErrorListener errorListener) {
-		super(method, url, errorListener);
-		mListener = listener;
-	}
+    private ObjectRequest(int method, String url, Listener<T> listener, ErrorListener errorListener) {
+        super(method, url, errorListener);
+        mListener = listener;
+    }
 
-	/**
-	 * constructor
-	 *
-	 * @param method
-	 * @param url
-	 * @param clazz
-	 * @param listener
-	 * @param errorListener
-	 */
-	public ObjectRequest(int method, String url, Class<T> clazz, Listener<T> listener, ErrorListener errorListener) {
-		super(method, url, errorListener);
-		mListener = listener;
-		mClazz = clazz;
-	}
+    /**
+     * constructor
+     *
+     * @param method
+     * @param url
+     * @param clazz
+     * @param listener
+     * @param errorListener
+     */
+    public ObjectRequest(int method, String url, Class<T> clazz, Listener<T> listener, ErrorListener errorListener) {
+        super(method, url, errorListener);
+        mListener = listener;
+        mClazz = clazz;
+    }
 
-	private Context mContext;
+    private Context mContext;
 
-	public ObjectRequest(Context context, int method, String url, Class<T> clazz, Listener<T> listener, ErrorListener errorListener, boolean isPass) {
-		super(method, url, errorListener);
-		mListener = listener;
-		mClazz = clazz;
-		mContext = context;
-		this.isPass = isPass;
-	}
+    public ObjectRequest(Context context, int method, String url, Class<T> clazz, Listener<T> listener, ErrorListener errorListener, boolean isPass) {
+        super(method, url, errorListener);
+        mListener = listener;
+        mClazz = clazz;
+        mContext = context;
+        this.isPass = isPass;
+    }
 
-	/**
-	 * constructor
-	 *
-	 * @param method
-	 * @param url
-	 * @param clazz
-	 * @param listener
-	 * @param errorListener
-	 */
-	public ObjectRequest(Context context, int method, String url, Class<T> clazz, Listener<T> listener, ErrorListener errorListener, T errorT) {
-		super(method, url, errorListener);
-		mListener = listener;
-		mClazz = clazz;
-		mErrorT = errorT;
-		mContext = context;
-	}
+    /**
+     * constructor
+     *
+     * @param method
+     * @param url
+     * @param clazz
+     * @param listener
+     * @param errorListener
+     */
+    public ObjectRequest(Context context, int method, String url, Class<T> clazz, Listener<T> listener, ErrorListener errorListener, T errorT) {
+        super(method, url, errorListener);
+        mListener = listener;
+        mClazz = clazz;
+        mErrorT = errorT;
+        mContext = context;
+    }
 
-	public ObjectRequest(int method, String url, Class<T> clazz, Listener<T> listener, ErrorListener errorListener, T errorT) {
-		super(method, url, errorListener);
-		mListener = listener;
-		mClazz = clazz;
-		mErrorT = errorT;
-	}
+    public ObjectRequest(int method, String url, Class<T> clazz, Listener<T> listener, ErrorListener errorListener, T errorT) {
+        super(method, url, errorListener);
+        mListener = listener;
+        mClazz = clazz;
+        mErrorT = errorT;
+    }
 
-	@Override
-	protected void deliverResponse(T response) {
-		mListener.onResponse(response);
-	}
+    @Override
+    protected void deliverResponse(T response) {
+        mListener.onResponse(response);
+    }
 
-	@Override
-	protected Response<T> parseNetworkResponse(NetworkResponse response) {
-		try {
-			// 将结果转换为T
-			final String data = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+    @Override
+    protected Response<T> parseNetworkResponse(NetworkResponse response) {
+        try {
+            // 将结果转换为T
+            final String data = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
 
             Log.e("parseNetworkResponse", data);
             Gson gson = new GsonBuilder().create();
-            EnResult result = gson.fromJson(data, EnResult.class);
 //					JSONHelper.parseObject(data, EnResult.class);
             T newResult;
 
-            if (isPass) {
-                // TODO 解密
+            if (isPass && !getUrl().contains("app.init")) {
+                //解密
+                EnResult result = gson.fromJson(data, EnResult.class);
                 if (result == null) {
                     result = (EnResult) mErrorT;
                 }
@@ -155,21 +153,21 @@ public class ObjectRequest<T> extends Request<T> {
                         token = PreferenceUtils.getValue(mContext, "token", "");
                     }
 
-					String key = PreferenceUtils.getValue(mContext, "key", "");
-					if (!TextUtils.isEmpty(result.key)) {
-						PreferenceUtils.setValue(mContext, "key", result.key);
-						key = result.key;
-					}
+                    String key = PreferenceUtils.getValue(mContext, "key", "");
+                    if (!TextUtils.isEmpty(result.key)) {
+                        PreferenceUtils.setValue(mContext, "key", result.key);
+                        key = result.key;
+                    }
 
-					int userId = result.userId;
+                    int userId = result.userId;
 
-					if (userId == 0) {
-						if (!this.getUrl().contains("app.init")) {
-							userId = Integer.valueOf(PreferenceUtils.getValue(mContext, "userId", 0));
-						}
-					} else {
-						PreferenceUtils.setValue(mContext, "userId", result.userId);
-					}
+                    if (userId == 0) {
+                        if (!this.getUrl().contains("app.init")) {
+                            userId = Integer.valueOf(PreferenceUtils.getValue(mContext, "userId", 0));
+                        }
+                    } else {
+                        PreferenceUtils.setValue(mContext, "userId", result.userId);
+                    }
 
                     AESUtils aesUtils = new AESUtils(token, key, userId);
                     String datas = aesUtils.decrypt(result.data);
