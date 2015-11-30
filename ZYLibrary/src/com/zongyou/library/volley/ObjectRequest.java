@@ -135,7 +135,7 @@ public class ObjectRequest<T> extends Request<T> {
 //					JSONHelper.parseObject(data, EnResult.class);
             T newResult;
 
-            if (isPass && !getUrl().contains("app.init")) {
+            if (isPass) {
                 //解密
                 EnResult result = gson.fromJson(data, EnResult.class);
                 if (result == null) {
