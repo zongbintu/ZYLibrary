@@ -35,6 +35,9 @@ import com.zongyou.library.util.base64.EnResult;
 import com.zongyou.library.util.json.JSONHelper;
 import com.zongyou.library.util.storage.PreferenceUtils;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -136,8 +139,23 @@ public class ObjectRequest<T> extends Request<T> {
             T newResult;
 
             if (isPass) {
+                JSONObject obj = new JSONObject(data);
+
+
+                if(!obj.isNull("data")){
+                    JSONObject objTmp = obj.optJSONObject("data");
+                    if(objTmp != null && objTmp.length() == 0){
+                        obj.put("data", null);
+                    }else {
+                        JSONArray objArr = obj.optJSONArray("data");
+                        if (objArr != null && objArr.length() == 0) {
+                            obj.put("data", null);
+                        }
+                    }
+                }
+
                 //解密
-                EnResult result = gson.fromJson(data, EnResult.class);
+                EnResult result = gson.fromJson(obj.toString(), EnResult.class);
                 if (result == null) {
                     result = (EnResult) mErrorT;
                 }
