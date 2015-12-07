@@ -23,17 +23,9 @@ import android.text.TextUtils;
 
 import com.zongyou.library.util.LogUtils;
 
-import org.apache.http.Header;
-import org.apache.http.HeaderElement;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.protocol.HTTP;
-
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
-import java.nio.charset.Charset;
 import java.util.Locale;
 
 /**
@@ -143,69 +135,6 @@ public class OtherUtils {
 
 	}
 
-	public static boolean isSupportRange(final HttpResponse response) {
-		if (response == null)
-			return false;
-		Header header = response.getFirstHeader("Accept-Ranges");
-		if (header != null) {
-			return "bytes".equals(header.getValue());
-		}
-		header = response.getFirstHeader("Content-Range");
-		if (header != null) {
-			String value = header.getValue();
-			return value != null && value.startsWith("bytes");
-		}
-		return false;
-	}
-
-	public static String getFileNameFromHttpResponse(final HttpResponse response) {
-		if (response == null)
-			return null;
-		String result = null;
-		Header header = response.getFirstHeader("Content-Disposition");
-		if (header != null) {
-			for (HeaderElement element : header.getElements()) {
-				NameValuePair fileNamePair = element
-						.getParameterByName("filename");
-				if (fileNamePair != null) {
-					result = fileNamePair.getValue();
-					// try to get correct encoding str
-					result = CharsetUtils.toCharset(result, HTTP.UTF_8,
-							result.length());
-					break;
-				}
-			}
-		}
-		return result;
-	}
-
-	public static Charset getCharsetFromHttpRequest(
-			final HttpRequestBase request) {
-		if (request == null)
-			return null;
-		String charsetName = null;
-		Header header = request.getFirstHeader("Content-Type");
-		if (header != null) {
-			for (HeaderElement element : header.getElements()) {
-				NameValuePair charsetPair = element
-						.getParameterByName("charset");
-				if (charsetPair != null) {
-					charsetName = charsetPair.getValue();
-					break;
-				}
-			}
-		}
-
-		boolean isSupportedCharset = false;
-		if (!TextUtils.isEmpty(charsetName)) {
-			try {
-				isSupportedCharset = Charset.isSupported(charsetName);
-			} catch (Throwable e) {
-			}
-		}
-
-		return isSupportedCharset ? Charset.forName(charsetName) : null;
-	}
 
 	private static final int STRING_BUFFER_LENGTH = 100;
 

@@ -1,9 +1,5 @@
 package com.zongyou.library.util;
 
-import java.util.Map;
-
-import org.apache.http.NameValuePair;
-
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
@@ -21,6 +17,8 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Map;
 
 /**
  * :Activity特性辅助工具
@@ -200,23 +198,6 @@ public class ActivityUtil {
 		}
 	}
 
-	/**
-	 * title : 带参数进行Activity跳转 description :带参数进行Activity跳转 下午10:22:58
-	 * 
-	 * @param activity
-	 * @param target
-	 * @param params
-	 */
-	public static void switchTo(Activity activity,
-			Class<? extends Activity> target, NameValuePair... params) {
-		if (null != params) {
-			Intent intent = new Intent(activity, target);
-			for (NameValuePair param : params) {
-				setValueToIntent(intent, param.getName(), param.getValue());
-			}
-			switchTo(activity, intent);
-		}
-	}
 
 	/**
 	 * title : 显示Toast消息。 description :显示Toast消息，并保证运行在UI线程中 下午08:36:02

@@ -1,8 +1,5 @@
 package com.zongyou.library.widget.adapter;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.SparseArray;
@@ -15,7 +12,7 @@ import android.widget.TextView;
 /**
  * 通用ViewHolder
  * 
- * @author Altas
+ * @author Tu
  * @date 2014年9月2日
  */
 public class ViewHolder {
@@ -102,7 +99,7 @@ public class ViewHolder {
 	 * 为ImageView设置图片
 	 * 
 	 * @param viewId
-	 * @param drawableId
+	 * @param bm
 	 * @return
 	 */
 	public ViewHolder setImageBitmap(int viewId, Bitmap bm) {
@@ -111,24 +108,6 @@ public class ViewHolder {
 		return this;
 	}
 
-	/**
-	 * 为ImageView设置图片
-	 * 
-	 * @param viewId
-	 * @param drawableId
-	 * @return
-	 */
-	public ViewHolder setImageUrl(int viewId, String url, ImageLoader loader,
-			int defaultImage) {
-		NetworkImageView view = getView(viewId);
-		if (defaultImage != 0) {
-			view.setDefaultImageResId(defaultImage);
-			view.setErrorImageResId(defaultImage);
-		}
-		view.setImageUrl(url, loader);
-
-		return this;
-	}
 
 	/**
 	 * 为ImageView设置图片
@@ -147,7 +126,7 @@ public class ViewHolder {
 	 * 为ImageView设置图片
 	 * 
 	 * @param viewId
-	 * @param drawableId
+	 * @param visibility
 	 * @return
 	 */
 	public ViewHolder setViewVisible(int viewId, int visibility) {

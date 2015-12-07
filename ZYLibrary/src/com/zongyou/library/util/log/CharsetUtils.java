@@ -15,7 +15,6 @@
 
 package com.zongyou.library.util.log;
 
-import org.apache.http.protocol.HTTP;
 
 import com.zongyou.library.util.LogUtils;
 
@@ -63,7 +62,7 @@ public class CharsetUtils {
 		}
 	}
 
-	public static final String DEFAULT_ENCODING_CHARSET = HTTP.DEFAULT_CONTENT_CHARSET;
+	public static final String DEFAULT_ENCODING_CHARSET = "UTF-8";
 
 	public static final List<String> SUPPORT_CHARSET = new ArrayList<String>();
 
