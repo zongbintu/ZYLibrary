@@ -165,8 +165,9 @@ public class ObjectRequest<T> extends Request<T> {
                     String token = result.token;
                     if (TextUtils.isEmpty(token)) {
                         token = PreferenceUtils.getValue(mContext, "logintoken", "");
-                    } else
-                        PreferenceUtils.setValue(mContext, "token", result.token);
+                    } else {
+//                        PreferenceUtils.setValue(mContext, "token", result.token);
+                    }
                     if (TextUtils.isEmpty(token)) {
                         token = PreferenceUtils.getValue(mContext, "token", "");
                     }
