@@ -6,14 +6,15 @@ dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
     compile 'com.android.support:support-v4:22.1.1'
     compile 'com.google.code.gson:gson:2.4'
+    compile 'com.github.2tu:upgrade:0.1'
 }
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    buildToolsVersion "23.0.1"
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 15
+        targetSdkVersion 22
 
     }
     sourceSets {
