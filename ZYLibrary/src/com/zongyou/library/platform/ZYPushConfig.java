@@ -77,10 +77,10 @@ public class ZYPushConfig {
                             initAlias(context, alias);
                             sRetryTimes++;
 
-                            LogUtils.e(TAG, "初始化推送别名，重试：" + sRetryTimes);
+                            LogUtils.d(TAG, "初始化推送别名，重试：" + sRetryTimes);
                         } else {
                             sRetryTimes = 0;
-                            LogUtils.e(TAG, "初始化推送别名：成功");
+                            LogUtils.d(TAG, "初始化推送别名：成功");
                         }
                     }
                 });

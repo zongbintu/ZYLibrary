@@ -96,9 +96,9 @@ public class ToastUtils {
             @Override
             public void run() {
                 ((TextView) mNextView.findViewById(android.R.id.message)).setText(text);
-                LogUtils.e("has parent "+(mNextView.getParent() == null));
+                LogUtils.d("has parent "+(mNextView.getParent() == null));
                 if (mNextView.getParent() != null){
-                	LogUtils.e("parent "+mNextView.getParent().toString());
+                	LogUtils.d("parent "+mNextView.getParent().toString());
                     mWM.removeView(mNextView);
                     
                 }
