@@ -71,7 +71,7 @@ public class ZYStatConfig {
         if(!sNeedStat){
             return;
         }
-        if(TextUtils.isEmpty(pageName) && StatConfig.isDebugEnable()){
+        if(TextUtils.isEmpty(pageName) && StatConfig.isDebugEnable() && sTagCheck){
             throw new RuntimeException("STAT TAG NOT SET!");
         }
         if(TextUtils.isEmpty(pageName)){
