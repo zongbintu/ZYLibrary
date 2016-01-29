@@ -3,11 +3,14 @@ package com.zongyou.library.app;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.zongyou.library.platform.ZYStatConfig;
+import com.zongyou.library.util.LogUtils;
 import com.zongyou.library.widget.util.ViewFinder;
 
 /**
@@ -23,6 +26,8 @@ public abstract class BaseFragment extends Fragment {
     // 是否可以初始化
     protected boolean initAble = true;
     protected ViewFinder mViewFinder;
+
+    private String mFragmentTag; // 页面统计TAG
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,6 +93,30 @@ public abstract class BaseFragment extends Fragment {
 
     protected void setViewClickListener(int layoutId, View.OnClickListener listener) {
         mViewFinder.find(layoutId).setOnClickListener(listener);
+    }
+
+
+    public void setPageTag(String tag) {
+        mFragmentTag = tag;
+    }
+
+    public String getPageTag() {
+        if (TextUtils.isEmpty(mFragmentTag) && ZYStatConfig.isNeedStat()) {
+            LogUtils.e("STAT_TAG", "NET SEET TAG ====>>: " + this.getClass().getName());
+        }
+        return mFragmentTag;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ZYStatConfig.onPageResume(getContext(), getPageTag());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ZYStatConfig.onPagePause(getContext(), getPageTag());
     }
 
 
