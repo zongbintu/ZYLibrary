@@ -26,7 +26,7 @@ public class ZYStatConfig {
                     com.tencent.stat.common.StatConstants.VERSION);
         } catch (MtaSDkException e) {
             e.printStackTrace();
-            LogUtils.e(TAG, "初始化统计失败: " + e.getMessage());
+            LogUtils.d(TAG, "初始化统计失败: " + e.getMessage());
         }
     }
 
