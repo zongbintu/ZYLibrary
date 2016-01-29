@@ -133,7 +133,7 @@ public class ObjectRequest<T> extends Request<T> {
             // 将结果转换为T
             final String data = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
 
-            Log.e("parseNetworkResponse", data);
+            Log.d("parseNetworkResponse", data);
             Gson gson = new GsonBuilder().create();
 //					JSONHelper.parseObject(data, EnResult.class);
             T newResult;
@@ -190,7 +190,7 @@ public class ObjectRequest<T> extends Request<T> {
 
                     AESUtils aesUtils = new AESUtils(token, key, userId);
                     String datas = aesUtils.decrypt(result.data);
-                    LogUtils.e("data", datas);
+                    LogUtils.d("data", datas);
                     if (null == mClazz || TextUtils.isEmpty(datas)) {
                         newResult = gson.fromJson(data, mClazz);
                         Response<T> responseT = Response.success(newResult, HttpHeaderParser.parseCacheHeaders(response));
