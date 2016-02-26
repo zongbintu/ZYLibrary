@@ -8,6 +8,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.github.2tu:upgrade:0.1'
     compile 'com.github.2tu:crop:1.11'
+    compile 'com.github.2tu:SlideButtonPreference:1.0'
 }
 
 android {
@@ -16,8 +17,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 3
-        versionName "1.1.0"
+        versionCode 4
+        versionName "1.0.12"
     }
     sourceSets {
         main {
